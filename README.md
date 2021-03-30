@@ -68,6 +68,24 @@ To clone the git repository:
 
 git clone https://github.com/MoustafaaAshraf/Disaster-Response-Message-Classification
 
+## Files within App
+
+- data
+1. process_data.py: Python scripts for ETL (Extract, Transform and Load).
+2. disaster_categories/disaster_messages: csv Data to be processed and used later to training a model.
+   
+- models
+1. train_classifier.py: Python scripts for preprocessing and building a model.
+2. classifier.pkl: Saved/trained model.
+
+- app
+1. master.html: a main page of web app.
+2. go.html: classification result page of web app.
+3. run.py: Python scripts for Flask file that runs app.
+
+- README.md
+
+
 ## Executing Program
 
 You can run the following commands in the project's directory to set up the database, train model and save the model.
