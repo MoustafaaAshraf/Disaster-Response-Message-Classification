@@ -18,6 +18,7 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import classification_report
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import GridSearchCV
 
 
 def load_data(database_filepath):
@@ -79,7 +80,7 @@ def tokenize(text):
 def build_model():
     '''
     creating a pipeline for modelling the database of categories and labels
-    :return: pipeline
+    :return: model to be trained using grid search
     '''
     pipeline = Pipeline([
         # creating a count vectorizer using the tokens provided by a list
@@ -89,10 +90,15 @@ def build_model():
         ('tfidf', TfidfTransformer()),
 
         # an instance of multi-class classifier based on RandomForestClassifier
-        ('clf', MultiOutputClassifier(RandomForestClassifier()))
+        ('clf', MultiOutputClassifier(RandomForestClassifier(n_estimators=200)))
     ])
 
-    return pipeline
+    parameters = {'clf__estimator__max_depth': [3, 5, 10, 50],
+                  'clf__estimator__min_samples_leaf': [2, 5, 10]}
+
+    grid = GridSearchCV(pipeline, parameters)
+
+    return grid
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
