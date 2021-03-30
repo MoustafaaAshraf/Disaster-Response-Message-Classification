@@ -90,11 +90,11 @@ def build_model():
         ('tfidf', TfidfTransformer()),
 
         # an instance of multi-class classifier based on RandomForestClassifier
-        ('clf', MultiOutputClassifier(RandomForestClassifier(n_estimators=200)))
+        ('clf', MultiOutputClassifier(RandomForestClassifier(n_estimators=50)))
     ])
 
-    parameters = {'clf__estimator__max_depth': [3, 5, 10, 50],
-                  'clf__estimator__min_samples_leaf': [2, 5, 10]}
+    parameters = {'clf__estimator__max_depth': [10, None],
+                  'clf__estimator__min_samples_leaf': [5, 10]}
 
     grid = GridSearchCV(pipeline, parameters)
 
