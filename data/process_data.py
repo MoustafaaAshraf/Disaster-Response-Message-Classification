@@ -1,19 +1,36 @@
+# Importing needed libraries
 import sys
 import pandas as pd
 from sqlalchemy import create_engine
 
-def load_data(messages_filepath, categories_filepath):
 
+def load_data(messages_filepath, categories_filepath):
+    '''
+
+    :param messages_filepath: the location of the file of messages csv
+    :param categories_filepath: the location of the file of categories csv
+    :return: a dataframe containing a merge of the messages and the respective categories
+    '''
+    # reading with pandas
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
+    # merging the two dataframes on the id columns
     df = pd.merge(messages, categories, how='inner', on='id')
     return df
 
 def clean_data(df):
+    '''
 
+    :param df: a dataframe read and merged between categories and respective messages
+    :return: a dataframe cleaned and ready for text processing
+    '''
+    # Splitting the catgories column into several columns into a new dataframe
     categories = df['categories'].str.split(';', expand=True)
+    # using the first row to be used for creating new columns for categories
     row = categories.iloc[0, :]
+    # extracting label names from the first row
     category_colnames = row.apply(lambda x: x[0:-2])
+    # naming the new columns
     categories.columns = category_colnames
     for column in categories:
         # set each value to be the last character of the string
@@ -22,13 +39,22 @@ def clean_data(df):
         # convert column from string to numeric
         categories[column] = categories[column].astype(int)
 
+    # dropping the old categories column
     df.drop('categories', axis=1, inplace=True)
+    # adding the newly created columns into the dataframe
     df = pd.concat([df, categories], axis=1)
+    # Dropping the duplicated rows from the dataframe
     df = df.drop_duplicates()
 
     return df
 
 def save_data(df, database_filename):
+    '''
+
+    :param df: the dataframe with newly created categories
+    :param database_filename: location of the saved dataframe
+
+    '''
     engine = create_engine('sqlite:///' + database_filename)
     df.to_sql('etltable', engine, index=False)
 
