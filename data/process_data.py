@@ -43,6 +43,8 @@ def clean_data(df):
     df.drop('categories', axis=1, inplace=True)
     # adding the newly created columns into the dataframe
     df = pd.concat([df, categories], axis=1)
+    # Removing entry that is non-binary
+    df = df[df['related'] != 2]
     # Dropping the duplicated rows from the dataframe
     df = df.drop_duplicates()
 
@@ -56,7 +58,7 @@ def save_data(df, database_filename):
 
     '''
     engine = create_engine('sqlite:///' + database_filename)
-    df.to_sql('etltable', engine, index=False)
+    df.to_sql('etltable', engine, index=False, if_exists='replace')
 
 
 def main():
